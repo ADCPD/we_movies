@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connect to {{ app.request.server.get('APP_PROJECT_NAME') }} {% endblock %}
+
+{% block body %}
+ <div class="container">
+     <div class="row">
+         <div class="col-md-4" style="color: red">
+             <ul>
+                 {% for genders in items.genders %}
+                    {% for gender in genders %}
+                        <li id="{{ gender.id }}">{{ gender.name }}</li>
+                     {% endfor %}
+                 {% endfor %}
+             </ul>
+         </div>
+         <div class="col-md-8"  style="color: orangered">
+             {{ dump(items.movies) }}
+         </div>
+     </div>
+ </div>
+{% endblock %}

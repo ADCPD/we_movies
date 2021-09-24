@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connect to {{ app.request.server.get('APP_PROJECT_NAME') }}{% endblock %}
+
+{% block body %}
+ <div class="container">
+     <div class="row">
+         <a href="{{ path('tmdb_authentication') }}" class="btn btn-primary">Connect to TMDB Movies</a>
+     </div>
+ </div>
+{% endblock %}
