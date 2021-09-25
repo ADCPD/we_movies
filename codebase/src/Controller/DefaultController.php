@@ -2,11 +2,8 @@
 
 namespace App\Controller;
 
-
-
 use App\Services\TmdbService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -91,5 +88,18 @@ class DefaultController extends AbstractController
     )
     {
         return $this->json($tmdbService->getMovieByGenre($id));
+    }
+
+    /**
+     * @Route(path="/movie/{id}/streaming", name="tmdb_movie_stream_json", methods={"GET","HEAD"}))
+     * @param int $id
+     * @param TmdbService $tmdbService
+     */
+    public function getStreamMovieData(
+        int $id,
+        TmdbService $tmdbService
+    )
+    {
+        return $this->json($tmdbService->getSteamMovieData($id));
     }
 }

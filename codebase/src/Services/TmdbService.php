@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -109,9 +110,40 @@ class TmdbService
         }
     }
 
+    /**
+     * @param string $movieID
+     * @return array
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    public function getSteamMovieData(string $movieID)
+    {
+        $requestPath = "https://api.themoviedb.org/3/movie/{$movieID}?api_key=" . $this->apiKey . "&language=en-US";
+        $data = $this->getClientRequest('GET', $requestPath);
+
+        if ($data->getStatusCode() === 200) {
+            $movie = json_decode($data->getContent(), true);
+            if ($movie) {
+                $videoMovieData = $this->getVideos($movieID);
+                return [
+                    "movie_id"              => $movieID,
+                    "movie_key"             => $videoMovieData['results'][0]['key'],
+                    "movie_streaming_path"  => $this->getYoutubeLink($videoMovieData['results'][0]['key']),
+                ];
+            }
+        } else {
+            return [
+                'status' => 404,
+                'message' => "Movie ID#{$movieID} not found"
+            ];
+        }
+    }
+
     public function getVideos(int $movieId)
     {
-        $movieRequestPath = "https://api.themoviedb.org/3/movie/283566/videos?api_key=6643f28e7955c110b3032e12d51b8fcd&language=en-US";
+        $movieRequestPath = "https://api.themoviedb.org/3/movie/283566/videos?api_key=" . $this->apiKey . "&language=en-US";
         $topMovieData = $this->getClientRequest('GET', $movieRequestPath);
 
         if ($topMovieData->getStatusCode() === 200) {
@@ -174,28 +206,6 @@ class TmdbService
         return [
             'status'  => $response->getStatusCode(),
             'message' => "Connexion no etablished"
-        ];
-    }
-
-    /**
-     * @return array
-     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
-     */
-    public function authenticationRequestToken(): array
-    {
-        $requestPath = "https://api.themoviedb.org/3/authentication/token/new?api_key=" . $this->apiKey;
-        $response = $this->getClientRequest('GET', $requestPath);
-
-        if ($response->getStatusCode() === 200) {
-            return json_decode($response->getContent(), true);
-        }
-
-        return [
-            'status'  => $response->getStatusCode(),
-            'message' => "Error to generate token"
         ];
     }
 
