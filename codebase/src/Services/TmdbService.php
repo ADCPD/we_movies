@@ -26,6 +26,26 @@ class TmdbService
         $this->client = $client;
     }
 
+    /**
+     * @param int $genreId
+     * @return array
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    public function getMovieByGenre(int $genreId): array
+    {
+        $requestPath = "https://api.themoviedb.org/3/discover/movie?api_key=" . $this->apiKey . "&with_genres=" . $genreId;
+        $apiConnect = $this->authenticationGuestSession();
+        if ($apiConnect['success']) {
+            $data = $this->getClientRequest('GET', $requestPath);
+            if ($data->getStatusCode() === 200) {
+                return json_decode($data->getContent(), true);
+            }
+        }
+    }
+
     public function getMoviesData(): array
     {
         // check api connexion
@@ -34,27 +54,83 @@ class TmdbService
         if ($apiConnect['success']) {
             $genders = $this->getMoviesGender();
             $movies = $this->getTopRatedMovies();
+            $topMovie = $this->getTopOneMovies();
         }
 
         return [
-            'genders' => $genders ? $genders : [],
-            "movies" => $movies ? $movies : []
+            "top"       => $topMovie ? $topMovie : [],
+            "genders"   => $genders ? $genders : [],
+            "movies"    => $movies ? $movies : []
         ];
     }
 
-    public function getTopRatedMovies() : array
+    public function getTopRatedMovies()
     {
         $requestPath = "https://api.themoviedb.org/3/movie/top_rated?api_key=" . $this->apiKey . "&language=en-US";
         $data = $this->getClientRequest('GET', $requestPath);
         if ($data->getStatusCode() === 200) {
             $this->movies = json_decode($data->getContent(), true);
-            return $this->movies;
+            return $this->movies ;
         } else {
             return [
                 'status' => 404,
                 'message' => 'Movies data not found'
             ];
         }
+    }
+
+    /**
+     * @return array
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    public function getTopOneMovies() : array
+    {
+        $requestPath = "https://api.themoviedb.org/3/movie/top_rated?api_key=" . $this->apiKey . "&language=en-US&page=1";
+        $data = $this->getClientRequest('GET', $requestPath);
+        if ($data->getStatusCode() === 200) {
+           $movie = json_decode($data->getContent(), true);
+           if ($movie){
+               $movieId = $movie['results'][0]['id'];
+               $videoMovieData = $this->getVideos($movieId);
+               return [
+                   "movie_id"    => $movieId,
+                   "movie_key"   => $videoMovieData['results'][0]['key'],
+                   "movie_streaming_path" => $this->getYoutubeLink($videoMovieData['results'][0]['key'])
+               ];
+           }
+        } else {
+            return [
+                'status' => 404,
+                'message' => 'Top movie data not found'
+            ];
+        }
+    }
+
+    public function getVideos(int $movieId)
+    {
+        $movieRequestPath = "https://api.themoviedb.org/3/movie/283566/videos?api_key=6643f28e7955c110b3032e12d51b8fcd&language=en-US";
+        $topMovieData = $this->getClientRequest('GET', $movieRequestPath);
+
+        if ($topMovieData->getStatusCode() === 200) {
+            return json_decode($topMovieData->getContent(), true);
+        } else {
+            return [
+                'status' => 404,
+                'message' => 'Top movie data not found'
+            ];
+        }
+    }
+
+    /**
+     * @param string $code
+     * @return string
+     */
+    private function getYoutubeLink(string $code): string
+    {
+        return "https://www.youtube.com/embed/{$code}";
     }
     /**
      * @return array
@@ -63,7 +139,7 @@ class TmdbService
      * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    private function getMoviesGender(): array
+    public function getMoviesGender(): array
     {
         $requestPath = "https://api.themoviedb.org/3/genre/movie/list?api_key=" . $this->apiKey . "&language=en-US";
 

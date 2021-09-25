@@ -2,20 +2,95 @@
 
 {% block title %}Connect to {{ app.request.server.get('APP_PROJECT_NAME') }} {% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="//cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready( function () {
+
+            var jsonPath = 'http://localhost:8101/movies';
+            const getJSON = async url => {
+                const response = await fetch(url);
+                if(!response.ok) // check if response worked (no 404 errors etc...)
+                    throw new Error(response.statusText);
+
+                const movieData = await response.json(); // get JSON from the response
+                return movieData; // returns a promise, which resolves to this data value
+            }
+
+            function filter(array, test) {
+                var passed = [];
+                for (var i = 0; i < array.length; i++) {
+                    if(test(array[i]))
+                        passed.push(array[i]);
+                }
+                return passed;
+            }
+
+            $("input[type=radio]").click(function () {
+                var genreId = $(this).val();
+                $("#movies-list-section").remove();
+
+                getJSON(jsonPath).then(data => {
+                    var filtredData = filter(data.results, function(movie) {
+                       // console.log(movie.genre_ids.includes(genreId))
+                        return movie.genre_ids.includes(parseInt(genreId)) ;
+                    });
+                    console.log(filtredData.length)
+                    $(filtredData).each(function(index, item) {
+                        var backgoundImage = "https://image.tmdb.org/t/p/w500/" + item.backdrop_path;
+                        document.getElementById("movies-list").innerHTML += '<div id="movies-list-section" class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">' +
+                            '<div class="col p-4 d-flex flex-column position-static">' +
+                            '<h3 class="mb-0" data-filtered="' + item.id + '">' + item.title + '</h3>' +
+                            '<div class="mb-1 text-muted">Vote range  :  ' + item.vote_average + '</div>' +
+                            '<p class="card-text mb-auto">' + item.overview + '</p>' +
+                            '<a href="#" class="stretched-link">show more</a>' +
+                            '</div>' +
+                            '<div class="col-auto d-none d-lg-block">' +
+                            '<img src="' + backgoundImage + '" alt="" class="bd-placeholder-img" width="200" height="250"  role="img"/> '  +
+                            '</div>' +
+                            '</div>';
+                    })
+                    // console.log(filtredData)
+                }).catch(error => {
+                    console.error(error);
+                });
+            });
+        } );
+    </script>
+{% endblock %}
+
 {% block body %}
  <div class="container">
      <div class="row">
-         <div class="col-md-4" style="color: red">
-             <ul>
+         <div class="col-md-4">
+             <div id="movies-gender-list">
                  {% for genders in items.genders %}
                     {% for gender in genders %}
-                        <li id="{{ gender.id }}">{{ gender.name }}</li>
+                            <input type="radio" id="contactChoice{{ gender.id }}" name="contact" value="{{ gender.id }}">
+                            <label for="contactChoice{{ gender.id }}">{{ gender.name }}</label>
                      {% endfor %}
                  {% endfor %}
-             </ul>
+            </div>
          </div>
-         <div class="col-md-8"  style="color: orangered">
-             {{ dump(items.movies) }}
+         <div class="col-md-8">
+             <div class="row">
+                 {% for key, topMovie in items.top %}
+                     <div class="embed-responsive embed-responsive-16by9">
+                         {% if key == "movie_streaming_path" %}
+                             <iframe class="embed-responsive-item" src="{{ topMovie }}" allowfullscreen height="100%" width="100%"></iframe>
+                         {% endif %}
+                     </div>
+                 {% endfor %}
+             </div>
+             <div class="row">
+                 <section id="movies-list"></section>
+             </div>
          </div>
      </div>
  </div>

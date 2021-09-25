@@ -20,6 +20,18 @@
     "doctrine/lexer": {
         "version": "1.2.1"
     },
+    "friendsofsymfony/jsrouting-bundle": {
+        "version": "2.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "2.3",
+            "ref": "a9f2e49180f75cdc71ae279a929c4b2e0638de84"
+        },
+        "files": [
+            "config/routes/fos_js_routing.yaml"
+        ]
+    },
     "guzzlehttp/guzzle": {
         "version": "7.3.0"
     },
@@ -28,27 +40,6 @@
     },
     "guzzlehttp/psr7": {
         "version": "2.0.0"
-    },
-    "lcobucci/clock": {
-        "version": "2.0.0"
-    },
-    "lcobucci/jwt": {
-        "version": "4.1.4"
-    },
-    "lexik/jwt-authentication-bundle": {
-        "version": "2.5",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "2.5",
-            "ref": "5b2157bcd5778166a5696e42f552ad36529a07a6"
-        },
-        "files": [
-            "config/packages/lexik_jwt_authentication.yaml"
-        ]
-    },
-    "namshi/jose": {
-        "version": "7.2.3"
     },
     "nikic/php-parser": {
         "version": "v4.13.0"
@@ -94,6 +85,9 @@
     },
     "ralouphie/getallheaders": {
         "version": "3.0.3"
+    },
+    "symfony/asset": {
+        "version": "v5.3.4"
     },
     "symfony/cache": {
         "version": "v5.3.7"
@@ -195,9 +189,6 @@
     "symfony/options-resolver": {
         "version": "v5.3.7"
     },
-    "symfony/password-hasher": {
-        "version": "v5.3.7"
-    },
     "symfony/polyfill-intl-grapheme": {
         "version": "v1.23.1"
     },
@@ -207,9 +198,6 @@
     "symfony/polyfill-mbstring": {
         "version": "v1.23.1"
     },
-    "symfony/polyfill-php56": {
-        "version": "v1.20.0"
-    },
     "symfony/polyfill-php73": {
         "version": "v1.23.0"
     },
@@ -218,12 +206,6 @@
     },
     "symfony/polyfill-php81": {
         "version": "v1.23.0"
-    },
-    "symfony/property-access": {
-        "version": "v5.3.7"
-    },
-    "symfony/property-info": {
-        "version": "v5.3.7"
     },
     "symfony/routing": {
         "version": "5.3",
@@ -241,29 +223,8 @@
     "symfony/runtime": {
         "version": "v5.3.4"
     },
-    "symfony/security-bundle": {
-        "version": "5.3",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "5.3",
-            "ref": "9c4fcf79873f7400c885b90935f7163233615d6f"
-        },
-        "files": [
-            "config/packages/security.yaml"
-        ]
-    },
-    "symfony/security-core": {
-        "version": "v5.3.7"
-    },
-    "symfony/security-csrf": {
+    "symfony/serializer": {
         "version": "v5.3.4"
-    },
-    "symfony/security-guard": {
-        "version": "v5.3.7"
-    },
-    "symfony/security-http": {
-        "version": "v5.3.7"
     },
     "symfony/service-contracts": {
         "version": "v2.4.0"
@@ -304,5 +265,8 @@
     },
     "twig/twig": {
         "version": "v2.14.7"
+    },
+    "willdurand/jsonp-callback-validator": {
+        "version": "v1.1.0"
     }
 }
