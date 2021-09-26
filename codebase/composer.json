@@ -8,7 +8,6 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/annotations": "^1.13",
-        "friendsofsymfony/jsrouting-bundle": "^2.7",
         "guzzlehttp/guzzle": "^7.3",
         "php-http/cache-plugin": "^1.7",
         "symfony/asset": "5.3.*",

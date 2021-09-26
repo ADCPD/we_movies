@@ -70,6 +70,17 @@ class DefaultController extends AbstractController
     }
 
     /**
+     * @Route(path="/movie/{id}", name="tmdb_movie_show_json", methods={"GET","HEAD"}))
+     **/
+    public function showMovie(
+        TmdbService $tmdbService,
+        int $id
+    )
+    {
+        return $this->json($tmdbService->getMovieById($id));
+    }
+
+    /**
      * @Route(path="/movies/genres", name="tmdb_movie_gender_list_json", methods={"GET","HEAD"}))
      **/
     public function getMovieGendre(

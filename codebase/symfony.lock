@@ -20,18 +20,6 @@
     "doctrine/lexer": {
         "version": "1.2.1"
     },
-    "friendsofsymfony/jsrouting-bundle": {
-        "version": "2.3",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "2.3",
-            "ref": "a9f2e49180f75cdc71ae279a929c4b2e0638de84"
-        },
-        "files": [
-            "config/routes/fos_js_routing.yaml"
-        ]
-    },
     "guzzlehttp/guzzle": {
         "version": "7.3.0"
     },
@@ -223,9 +211,6 @@
     "symfony/runtime": {
         "version": "v5.3.4"
     },
-    "symfony/serializer": {
-        "version": "v5.3.4"
-    },
     "symfony/service-contracts": {
         "version": "v2.4.0"
     },
@@ -265,8 +250,5 @@
     },
     "twig/twig": {
         "version": "v2.14.7"
-    },
-    "willdurand/jsonp-callback-validator": {
-        "version": "v1.1.0"
     }
 }

@@ -1,0 +1,7 @@
+{
+  "build/app.css": "http://localhost:8080/build/app.css",
+  "build/app.js": "http://localhost:8080/build/app.js",
+  "build/runtime.js": "http://localhost:8080/build/runtime.js",
+  "build/vendors-node_modules_popperjs_core_lib_index_js-node_modules_core-js_modules_es_array_concat_-549681.js": "http://localhost:8080/build/vendors-node_modules_popperjs_core_lib_index_js-node_modules_core-js_modules_es_array_concat_-549681.js",
+  "build/vendors-node_modules_popperjs_core_lib_index_js-node_modules_core-js_modules_es_array_concat_-b0a6ca.js": "http://localhost:8080/build/vendors-node_modules_popperjs_core_lib_index_js-node_modules_core-js_modules_es_array_concat_-b0a6ca.js"
+}

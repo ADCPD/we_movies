@@ -8,11 +8,17 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript" src="{{ asset('bundles/tdmMovies.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ asset('assets/searchTMDData.js') }}"></script>
 {% endblock %}
 
 {% block body %}
  <div class="container">
+     <div class="row">
+         <a id="reset_filter" href="{{ path('tmdb_authentication') }}">A propos de We Movies</a>
+     </div>
      <!-- TOP Rated Movie -->
      <div class="row">
          {% for key, topMovie in items.top %}
@@ -39,17 +45,18 @@
          </div>
          <div class="col-md-8">
              <div class="row">
-                 <section id="movies-list"></section>
-                 <!-- Modal -->
+                 <section id="movies_list"></section>
+                 <section id="modal_movies_list"></section>
 
+                 <!-- Modal -->
                  <div class="modal fade" id="movieModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                      <div class="modal-dialog">
                          <div class="modal-content">
                              <div class="modal-body">
                                  <div class="embed-responsive embed-responsive-16by9 embed-movie-modal">
                                      <iframe width="100%" height="100%" id="modal_stream_movie"  title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                     <div id="modal_stream_movie_description"></div>
                                  </div>
+                                 <div id="modal_stream_movie_description"></div>
                              </div>
                              <div class="modal-footer">
                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

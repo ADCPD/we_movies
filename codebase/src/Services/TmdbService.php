@@ -128,6 +128,7 @@ class TmdbService
             if ($movie) {
                 $videoMovieData = $this->getVideos($movieID);
                 return [
+                    "status"                => $data->getStatusCode(),
                     "movie_id"              => $movieID,
                     "movie_key"             => $videoMovieData['results'][0]['key'],
                     "movie_streaming_path"  => $this->getYoutubeLink($videoMovieData['results'][0]['key']),
@@ -206,6 +207,25 @@ class TmdbService
         return [
             'status'  => $response->getStatusCode(),
             'message' => "Connexion no etablished"
+        ];
+    }
+
+    public function getMovieById(int $movieId)
+    {
+        $requestPath = "https://api.themoviedb.org/3/movie/{$movieId}?api_key={$this->apiKey}&language=en-US";
+        $response = $this->getClientRequest('GET', $requestPath);
+        if ($response->getStatusCode() === 200) {
+           $movie = json_decode($response->getContent(), true);
+
+           if ($this->getSteamMovieData($movieId)['status'] === 200) {
+               $movie['movie_streaming_path'] = $this->getSteamMovieData($movieId)['movie_streaming_path'];
+           }
+
+           return $movie;
+        }
+        return [
+            'status'  => $response->getStatusCode(),
+            'message' => "Movie no found"
         ];
     }
 
