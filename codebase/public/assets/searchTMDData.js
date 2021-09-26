@@ -15,6 +15,48 @@ $(document).ready( function () {
     }
 
     //--------------------------------------------------------------------------------//
+    //---------------------------------- SEARCH BAR ------------------------------//
+    //--------------------------------------------------------------------------------//
+    var requestPath = location.origin + '/names/movies';
+    $("select").select2({
+        theme: "bootstrap-5",
+        containerCssClass: "select2--large", // For Select2 v4.0
+        selectionCssClass: "select2--large", // For Select2 v4.1
+        dropdownCssClass: "select2--large",
+        ajax: {
+            url: requestPath,
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    q: params.term // search term
+                };
+            },
+            processResults: function(data, params) {
+                // parse the results into the format expected by Select2
+                // since we are using custom formatting functions we do not need to
+                // alter the remote JSON data, except to indicate that infinite
+                // scrolling can be used
+                var resData = [];
+                data.forEach(function(value) {
+                    if (value.title.indexOf(params.term) != -1)
+                        resData.push(value)
+                })
+                return {
+                    results: $.map(resData, function(item) {
+                        return {
+                            id: item.Id,
+                            text: item.title,
+                        }
+                    })
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 1
+    });
+
+    //--------------------------------------------------------------------------------//
     //---------------------------------- COMMUNS VALUES ------------------------------//
     //--------------------------------------------------------------------------------//
     var jsonPath = location.origin + '/movies';
@@ -89,34 +131,34 @@ $(document).ready( function () {
             '</div>' +
             '</div>';
 
-        generateModal(modalPath, item);
+
+            generateModal(modalPath, item.id);
     }
 
-    function generateModal(path, movie) {
-
+    function generateModal(path, id) {
         $('.modal-trigger').click(function () {
-
             var embedSelector = $("iframe#modal_stream_movie");
             var contentSelector = document.getElementById("modal_stream_movie_description");
 
-            getJSON(path).then(data => {
-                console.log(data)
+            $.get(path, function(data){
                 embedSelector.removeAttr('src');
                 contentSelector.innerHTML = "";
 
-                embedSelector.attr('src', data.movie_streaming_path);
-                contentSelector.innerHTML = '<p>' +
-                    '<strong> Original title : </strong> ' + data.original_title + '(' + data.original_language + ')' +
-                    '</br>' +
-                    '<strong> Title : </strong> ' + data.title +
-                    '</br>' +
-                    '<strong> Release Date : </strong> ' + data.release_date +
-                    '</br></hr>' +
-                    data.overview +
-                    '</p>';
-            }).catch(error => {
-                embedSelector.removeAttr('src');
-                contentSelector.innerHTML = "";
+                if (id === data.id) {
+                    embedSelector.attr('src', data.movie_streaming_path);
+                    contentSelector.innerHTML += '<p>' +
+                        '<strong> Original title : </strong> ' + data.original_title + '(' + data.original_language + ')' +
+                        '</br>' +
+                        '<strong> Title : </strong> ' + data.title +
+                        '</br>' +
+                        '<strong> Release Date : </strong> ' + data.release_date +
+                        '</br></hr>' +
+                        data.overview +
+                        '</p>';
+                } else {
+                    embedSelector.removeAttr('src');
+                    contentSelector.innerHTML =  "Sorry no data found!!"
+                }
             });
         });
     }

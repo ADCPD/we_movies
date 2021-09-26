@@ -113,4 +113,14 @@ class DefaultController extends AbstractController
     {
         return $this->json($tmdbService->getSteamMovieData($id));
     }
+
+    /**
+     * @Route(path="/names/movies", name="tmdb_movie_names_json", methods={"GET","HEAD"}))
+     **/
+    public function moviesNames(
+        TmdbService $tmdbService
+    )
+    {
+        return $this->json($tmdbService->getListMovies());
+    }
 }

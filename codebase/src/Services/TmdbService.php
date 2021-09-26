@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 /**
  * Class TmdbService
@@ -12,29 +13,21 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class TmdbService
 {
     private $apiKey ;
-    private $kernel;
     private $client;
-    private $movies = [];
-    private $gender = [];
+    protected $movies = [];
+    protected $gender = [];
 
+    /**
+     * TmdbService constructor.
+     * @param HttpClientInterface $client
+     */
     public function __construct(
-        KernelInterface $kernel,
         HttpClientInterface $client
-    )
-    {
+    ) {
         $this->apiKey = $_ENV['TMDB_API_KEY'];
-        $this->kernel = $kernel;
         $this->client = $client;
     }
 
-    /**
-     * @param int $genreId
-     * @return array
-     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
-     */
     public function getMovieByGenre(int $genreId): array
     {
         $requestPath = "https://api.themoviedb.org/3/discover/movie?api_key=" . $this->apiKey . "&with_genres=" . $genreId;
@@ -65,7 +58,7 @@ class TmdbService
         ];
     }
 
-    public function getTopRatedMovies()
+    public function getTopRatedMovies(): array
     {
         $requestPath = "https://api.themoviedb.org/3/movie/top_rated?api_key=" . $this->apiKey . "&language=en-US";
         $data = $this->getClientRequest('GET', $requestPath);
@@ -80,13 +73,6 @@ class TmdbService
         }
     }
 
-    /**
-     * @return array
-     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
-     */
     public function getTopOneMovies() : array
     {
         $requestPath = "https://api.themoviedb.org/3/movie/top_rated?api_key=" . $this->apiKey . "&language=en-US&page=1";
@@ -110,15 +96,7 @@ class TmdbService
         }
     }
 
-    /**
-     * @param string $movieID
-     * @return array
-     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
-     */
-    public function getSteamMovieData(string $movieID)
+    public function getSteamMovieData(string $movieID): array
     {
         $requestPath = "https://api.themoviedb.org/3/movie/{$movieID}?api_key=" . $this->apiKey . "&language=en-US";
         $data = $this->getClientRequest('GET', $requestPath);
@@ -142,6 +120,26 @@ class TmdbService
         }
     }
 
+    public function getListMovies()
+    {
+        $apiConnect = $this->authenticationGuestSession();
+        if ($apiConnect['success']) {
+            $movies = $this->getTopRatedMovies()['results'];
+
+            $selectOptions = [];
+            foreach ($movies as $index => $movie) {
+                $selectOptions[] = [
+                    'id' => $movie['id'],
+                    'title' => strtolower($movie['title'])
+                ];
+            }
+
+            return $selectOptions;
+        } else {
+            return [];
+        }
+    }
+
     public function getVideos(int $movieId)
     {
         $movieRequestPath = "https://api.themoviedb.org/3/movie/283566/videos?api_key=" . $this->apiKey . "&language=en-US";
@@ -157,21 +155,6 @@ class TmdbService
         }
     }
 
-    /**
-     * @param string $code
-     * @return string
-     */
-    private function getYoutubeLink(string $code): string
-    {
-        return "https://www.youtube.com/embed/{$code}";
-    }
-    /**
-     * @return array
-     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
-     */
     public function getMoviesGender(): array
     {
         $requestPath = "https://api.themoviedb.org/3/genre/movie/list?api_key=" . $this->apiKey . "&language=en-US";
@@ -188,13 +171,6 @@ class TmdbService
         }
     }
 
-    /**
-     * @return array
-     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
-     */
     public function authenticationGuestSession(): array
     {
         $requestPath = "https://api.themoviedb.org/3/authentication/guest_session/new?api_key=" . $this->apiKey;
@@ -210,7 +186,7 @@ class TmdbService
         ];
     }
 
-    public function getMovieById(int $movieId)
+    public function getMovieById(int $movieId): array
     {
         $requestPath = "https://api.themoviedb.org/3/movie/{$movieId}?api_key={$this->apiKey}&language=en-US";
         $response = $this->getClientRequest('GET', $requestPath);
@@ -229,14 +205,13 @@ class TmdbService
         ];
     }
 
-    /**
-     * @param string $method
-     * @param string $path
-     * @return \Symfony\Contracts\HttpClient\ResponseInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
-     */
-    private function getClientRequest(string $method, string $path)
+    private function getClientRequest(string $method, string $path): ResponseInterface
     {
         return $this->client->request($method, $path);
+    }
+
+    private function getYoutubeLink(string $code): string
+    {
+        return "https://www.youtube.com/embed/{$code}";
     }
 }

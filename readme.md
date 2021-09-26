@@ -1,4 +1,4 @@
-### Project using symfony 5 & PHP v8
+### Project : Env docker using PHP8 & mariadb ;) 
 **Localhost :** http://localhost:8101
 **phpmyadmin :** http://localhost:8102
 
@@ -28,3 +28,10 @@ In this project, you need to :
 
 You must create an account on the TheMovieDB and use their api.
 You need to deliver your code on a public Github.
+
+**Notes :**
+Je n'ai pas utilisé webpack , je n'ai jamais utilisé auparavant.
+J'ai vu qu'il fallait refaire la synthaxe de mon code JS (J'avais pas le temps). 
+
+J'ai eu un bug sur select2 autocomplete. Je n'ai pas reussi à le resoudre. 
+je n'arrive pas à valider le select option

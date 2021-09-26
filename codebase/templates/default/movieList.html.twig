@@ -4,21 +4,29 @@
 
 {% block stylesheets %}
     {{ parent() }}
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
-            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-            crossorigin="anonymous"></script>
-    <script type="text/javascript" src="{{ asset('assets/searchTMDData.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('assets/select2/css/select2.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/select2/css/select2-bootstrap-5-theme.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/select2/css/select2-bootstrap-5-theme.rtl.min.css') }}" />
 {% endblock %}
 
 {% block body %}
+    <main>
+        <header>
+            <div class="container">
+                <div class="row">
+                    <div class="col col-md-4">
+                        <a id="reset_filter" href="{{ path('tmdb_authentication') }}"><h3>A propos de We Movies</h3></a>
+                    </div>
+                    <div class="col col-md-4"></div>
+                    <div class="col col-md-4">
+                       <select id="tdm_movie_search" class="player-select form-control select2" width="200px" ></select>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+    </main>
  <div class="container">
-     <div class="row">
-         <a id="reset_filter" href="{{ path('tmdb_authentication') }}">A propos de We Movies</a>
-     </div>
      <!-- TOP Rated Movie -->
      <div class="row">
          {% for key, topMovie in items.top %}
@@ -69,4 +77,10 @@
          </div>
      </div>
  </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="application/javascript" src="{{ asset('assets/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('assets/searchTMDData.js') }}"></script>
 {% endblock %}
